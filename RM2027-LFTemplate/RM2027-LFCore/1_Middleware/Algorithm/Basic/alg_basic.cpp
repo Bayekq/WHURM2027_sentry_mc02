@@ -1,0 +1,288 @@
+/**
+ * @file alg_basic.cpp
+ * @author Bayekq
+ * @brief 一些极其简易的数学
+ * @version 1.0
+ * @date 2026/9/25 1.0 初始版本，参考中科大编写
+ *
+ * @copyright Copyright (c) 2026-2027
+ *
+ */
+
+/* Includes ------------------------------------------------------------------*/
+
+#include <cstring>
+
+#include "alg_basic.h"
+
+/* Private macros ------------------------------------------------------------*/
+
+/* Private types -------------------------------------------------------------*/
+
+/* Private variables ---------------------------------------------------------*/
+
+// rpm换算到rad/s
+const float BasicMathRpmToRadps = 2.0f * PI / 60.0f;
+// deg换算到rad
+const float BasicMathDegToRad = PI / 180.0f;
+// 摄氏度换算到开氏度
+const float BasicMathCelsiusToKelvin = 273.15f;
+
+/* Private function declarations ---------------------------------------------*/
+
+/* Function prototypes -------------------------------------------------------*/
+
+/**
+ * @brief 布尔值反转
+ *
+ * @param value 布尔值地址
+ */
+void BasicMath::booleanLogicalNot(bool* value)
+{
+    if (!*value)
+    {
+        *value = true;
+    }
+    else if (*value)
+    {
+        *value = false;
+    }
+}
+
+/**
+ * @brief 16位大小端转换（原地版本）
+ *
+ * @param address 地址
+ */
+void BasicMath::endianReverse16(void* address)
+{
+    uint8_t* tmpAddress8;
+    uint16_t* tmpAddress16;
+    tmpAddress8 = (uint8_t*) address;
+    tmpAddress16 = (uint16_t*) address;
+    *tmpAddress16 = tmpAddress8[0] << 8 | tmpAddress8[1];
+}
+
+/**
+ * @brief 16位大小端转换（源到目标版本）
+ *
+ * @param source 源数据地址
+ * @param destination 目标存储地址
+ * @return uint16_t 结果
+ */
+uint16_t BasicMath::endianReverse16(void* source, void* destination)
+{
+    uint8_t* tmpAddress8;
+    uint16_t tmpValue16;
+    tmpAddress8 = (uint8_t*) source;
+    tmpValue16 = tmpAddress8[0] << 8 | tmpAddress8[1];
+
+    if (destination != nullptr)
+    {
+        uint8_t* tmpSource, *tmpDestination;
+        tmpSource = (uint8_t*) source;
+        tmpDestination = (uint8_t*) destination;
+        tmpDestination[0] = tmpSource[1];
+        tmpDestination[1] = tmpSource[0];
+    }
+
+    return (tmpValue16);
+}
+
+/**
+ * @brief 32位大小端转换（原地版本）
+ *
+ * @param address 地址
+ */
+void BasicMath::endianReverse32(void* address)
+{
+    uint8_t* tmpAddress8;
+    uint32_t* tmpAddress32;
+    tmpAddress8 = (uint8_t*) address;
+    tmpAddress32 = (uint32_t*) address;
+    *tmpAddress32 = tmpAddress8[0] << 24 | tmpAddress8[1] << 16 | tmpAddress8[2] << 8 | tmpAddress8[3];
+}
+
+/**
+ * @brief 32位大小端转换（源到目标版本）
+ *
+ * @param source 源数据地址
+ * @param destination 目标存储地址
+ * @return uint32_t 结果
+ */
+uint32_t BasicMath::endianReverse32(void* source, void* destination)
+{
+    uint8_t* tmpAddress8;
+    uint32_t tmpValue32;
+    tmpAddress8 = (uint8_t*) source;
+    tmpValue32 = tmpAddress8[0] << 24 | tmpAddress8[1] << 16 | tmpAddress8[2] << 8 | tmpAddress8[3];
+
+    if (destination != nullptr)
+    {
+        uint8_t* tmpSource, *tmpDestination;
+        tmpSource = (uint8_t*) source;
+        tmpDestination = (uint8_t*) destination;
+        tmpDestination[0] = tmpSource[3];
+        tmpDestination[1] = tmpSource[2];
+        tmpDestination[2] = tmpSource[1];
+        tmpDestination[3] = tmpSource[0];
+    }
+
+    return (tmpValue32);
+}
+
+/**
+ * @brief 8位数据求和
+ *
+ * @param address 起始地址
+ * @param length 被加的数据的数量, 注意不是字节数
+ * @return uint8_t 结果
+ */
+uint8_t BasicMath::sum8(const uint8_t* address, uint32_t length)
+{
+    uint8_t sum = 0;
+    for (uint32_t i = 0; i < length; i++)
+    {
+        sum += address[i];
+    }
+    return (sum);
+}
+
+/**
+ * @brief 16位数据求和
+ *
+ * @param address 起始地址
+ * @param length 被加的数据的数量, 注意不是字节数
+ * @return uint16_t 结果
+ */
+uint16_t BasicMath::sum16(const uint16_t* address, uint32_t length)
+{
+    uint16_t sum = 0;
+    for (uint32_t i = 0; i < length; i++)
+    {
+        sum += address[i];
+    }
+    return (sum);
+}
+
+/**
+ * @brief 32位数据求和
+ *
+ * @param address 起始地址
+ * @param length 被加的数据的数量, 注意不是字节数
+ * @return uint32_t 结果
+ */
+uint32_t BasicMath::sum32(const uint32_t* address, uint32_t length)
+{
+    uint32_t sum = 0;
+    for (uint32_t i = 0; i < length; i++)
+    {
+        sum += address[i];
+    }
+    return (sum);
+}
+
+/**
+ * @brief sinc函数的实现
+ *
+ * @param x 输入
+ * @return float 输出
+ */
+float BasicMath::sinc(float x)
+{
+    // 分母为0则按极限求法
+    if (BasicMath::abs(x) <= 2.0f * FLT_EPSILON)
+    {
+        return (1.0f);
+    }
+
+    return (arm_sin_f32(x) / x);
+}
+
+/**
+ * @brief 将浮点数映射到整型
+ *
+ * @param x 浮点数
+ * @param float1 浮点数1
+ * @param float2 浮点数2
+ * @param int1 整型1
+ * @param int2 整型2
+ * @return int32_t 整型
+ */
+int32_t BasicMath::floatToInt(float x, float float1, float float2, int32_t int1, int32_t int2)
+{
+    float tmp = (x - float1) / (float2 - float1);
+    auto out = (int32_t)(tmp * (float) (int2 - int1) + (float) (int1));
+    return (out);
+}
+
+/**
+ * @brief 将整型映射到浮点数
+ *
+ * @param x 整型
+ * @param int1 整型1
+ * @param int2 整型2
+ * @param float1 浮点数1
+ * @param float2 浮点数2
+ * @return float 浮点数
+ */
+float BasicMath::intToFloat(int32_t x, int32_t int1, int32_t int2, float float1, float float2)
+{
+    float tmp = (float) (x - int1) / (float) (int2 - int1);
+    float out = tmp * (float2 - float1) + float1;
+    return (out);
+}
+
+/**
+ * @brief 判断浮点数是否为无效浮点数
+ *
+ * @param x 浮点数
+ * @return 是否为NaN或非正规数
+ */
+bool BasicMath::isInvalidFloat(float x)
+{
+    uint32_t bits;
+    std::memcpy(&bits, &x, sizeof(bits));
+    uint32_t exp = (bits >> 23) & 0xff;
+    uint32_t frac = bits & 0x7fffff;
+    if (exp == 0x00)
+    {
+        if (frac == 0x00)
+        {
+            // 正负零
+            return (false);
+        }
+        // 次正规数和非正规数
+        return (true);
+    }
+    if (exp == 0xFF)
+    {
+        // 无穷大和NaN
+        return (true);
+    }
+    // 正规数
+    return (false);
+}
+
+/**
+ * @brief 求取模归化
+ *
+ * @param x 传入数据
+ * @param modulus 模数
+ * @return 返回的归化数, 介于 ±modulus / 2 之间
+ */
+float BasicMath::modulusNormalization(float x, float modulus)
+{
+    float tmp;
+
+    tmp = fmod(x + modulus / 2.0f, modulus);
+
+    if (tmp < 0.0f)
+    {
+        tmp += modulus;
+    }
+
+    return (tmp - modulus / 2.0f);
+}
+
+/************************ COPYRIGHT(C) WHU-LuojiaFox **************************/

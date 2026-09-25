@@ -13,9 +13,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "dvc_lfbd.hpp"
-#include "dvc_rc.hpp"
-
 /* Exported macros -----------------------------------------------------------*/
 
 /* Exported types ------------------------------------------------------------*/
@@ -23,10 +20,6 @@
 #ifdef __cplusplus
 
 namespace LuojiaFox {
-
-namespace LFBD = DVC_LFBD;
-
-namespace RC = DVC_RC;
 
 } // namespace LuojiaFox
 
