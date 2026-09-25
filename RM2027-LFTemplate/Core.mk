@@ -107,6 +107,7 @@ CPPFLAGS += -fno-threadsafe-statics					# Disable thread safe statics
 #######################################
 # link script
 LDSCRIPT = STM32H723XG_FLASH_modified.ld
+# LDSCRIPT = STM32H723XG_FLASH.ld
 
 # libraries
 LIBS = -lc -lm -lnosys 
