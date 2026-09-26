@@ -33,10 +33,10 @@
  *       新增控制器时需要在此处添加case分支
  *
  */
-ClassController* ClassControllerFactory::createController(EnumControllerType type) {
+Controller* ControllerFactory::createController(EnumControllerType type) {
     switch (type) {
         case ControllerPid: {
-            ClassPID* pid = new ClassPID();
+            PID* pid = new PID();
             pid->init();  // 调用无参数初始化（重写基类纯虚函数）
             return pid;
         }
@@ -56,7 +56,7 @@ ClassController* ClassControllerFactory::createController(EnumControllerType typ
 }
 
 /**
- * @brief 创建并配置PID控制器
+ * @brief 创建并配置PID控制器（静态方法）
  *
  * @param kp P值
  * @param ki I值
@@ -75,7 +75,7 @@ ClassController* ClassControllerFactory::createController(EnumControllerType typ
  * @note 便捷方法：一步完成PID控制器的创建和配置
  *
  */
-ClassController* ClassControllerFactory::createPid(
+Controller* ControllerFactory::createPid(
     float kp,
     float ki,
     float kd,
@@ -87,9 +87,9 @@ ClassController* ClassControllerFactory::createPid(
     float iVariableSpeedA,
     float iVariableSpeedB,
     float iSeparateThreshold,
-    EnumPidDFirst dFirst
+    PidDFirst_e dFirst
 ) {
-    ClassPID* pid = new ClassPID();
+    PID* pid = new PID();
     pid->init(kp, ki, kd, kf, iOutMax, outMax, dt,
               deadZone, iVariableSpeedA, iVariableSpeedB,
               iSeparateThreshold, dFirst);

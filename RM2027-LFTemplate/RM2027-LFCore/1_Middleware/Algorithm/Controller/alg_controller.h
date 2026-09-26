@@ -38,9 +38,9 @@ enum EnumControllerType {
  *        定义所有控制器的统一接口（使用小驼峰命名）
  *
  */
-class ClassController {
+class Controller {
 public:
-    virtual ~ClassController() = default;
+    virtual ~Controller() = default;
 
     /**
      * @brief 初始化控制器（纯虚函数，由子类实现）
@@ -92,7 +92,7 @@ protected:
 
 /* Exported function declarations --------------------------------------------*/
 
-inline EnumControllerType ClassController::getControllerType() {
+inline EnumControllerType Controller::getControllerType() {
     return (controllerType);
 }
 

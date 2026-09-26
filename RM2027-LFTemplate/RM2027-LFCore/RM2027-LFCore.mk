@@ -2,9 +2,16 @@
 # LuojiaFox RM2027 LFCore makefile
 #######################################
 
+C_SOURCES += \
+$(wildcard $(CORE_DIR)/1_Middleware/*/*.c) \
+$(wildcard $(CORE_DIR)/1_Middleware/*/*/*.c) \
+$(wildcard $(CORE_DIR)/2_Device/*/*.c) \
+$(wildcard $(CORE_DIR)/4_Application/*/*.c)
+
 CPP_SOURCES += \
 $(wildcard $(CORE_DIR)/1_Middleware/*/*.cpp) \
 $(wildcard $(CORE_DIR)/1_Middleware/*/*/*.cpp) \
+$(wildcard $(CORE_DIR)/2_Device/*/*.cpp) \
 $(wildcard $(CORE_DIR)/4_Application/*/*.cpp) \
 $(wildcard $(CORE_DIR)/3_LuojiaFox/*.cpp) \
 $(wildcard $(CORE_DIR)/template.cpp)
@@ -13,6 +20,9 @@ $(wildcard $(CORE_DIR)/template.cpp)
 MIDDLEWARE_SUBDIRS := \
 $(wildcard $(CORE_DIR)/1_Middleware/*) \
 $(wildcard $(CORE_DIR)/1_Middleware/*/*)
+
+DEVICE_SUBDIRS := \
+$(wildcard $(CORE_DIR)/2_Device/*)
 
 APP_SUBDIRS := \
 $(wildcard $(CORE_DIR)/4_Application/*)
@@ -23,5 +33,6 @@ $(wildcard $(CORE_DIR)/3_LuojiaFox)
 C_INCLUDES += \
 -I$(CORE_DIR) \
 $(addprefix -I,$(MIDDLEWARE_SUBDIRS)) \
+$(addprefix -I,$(DEVICE_SUBDIRS)) \
 $(addprefix -I,$(APP_SUBDIRS)) \
 $(addprefix -I,$(LUOJIAFOX_SUBDIRS))

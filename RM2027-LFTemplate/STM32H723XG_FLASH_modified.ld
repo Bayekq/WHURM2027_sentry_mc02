@@ -53,23 +53,27 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = ORIGIN(DTCMRAM) + LENGTH(DTCMRAM);    /* end of RAM */
+_estack = ORIGIN(RAM_D1) + LENGTH(RAM_D1);    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0xC000;      /* required amount of heap  */
-_Min_Stack_Size = 0x4000; /* required amount of stack */
+_Min_Heap_Size = 0x20000;      /* required amount of heap  (128KB) */
+_Min_Stack_Size = 0x10000; /* required amount of stack (64KB) */
 
 /*
-堆 (48KB) 可以支持：
-✅ 当前默认任务 (128 words)
-✅ 10-15个中等大小的任务 (256-512 words each)
-✅ 多个队列、信号量、互斥锁
-✅ 未来的算法任务、通信任务等
-栈 (16KB) 可以支持：
-✅ 主函数调用链
-✅ 中断嵌套
-✅ 矩阵运算临时变量
+堆 (128KB) 可以支持：
+✅ 8-15个卡尔曼滤波器实例（6-15维）
+✅ FreeRTOS 对象（队列、信号量、互斥锁）
+✅ 大量动态缓冲区分配
+✅ 复杂算法的临时数组
+✅ STL容器、字符串处理等
+栈 (64KB) 可以支持：
+✅ 主函数调用链（深层递归）
+✅ 中断嵌套（5-8层）
+✅ 复杂数学运算（矩阵运算、浮点运算）
+✅ printf/sprintf 等格式化函数
+✅ 异常处理和错误恢复
 
-剩余空间 (约20-30KB) 作为缓冲，防止代码增长后再次溢出。
+配置已与标准Flash版本完全一致
+数据段位于 RAM_D1 (320KB)，充分利用大容量内存空间
 */
 
 /* Specify the memory areas */
@@ -180,7 +184,7 @@ SECTIONS
 
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  } >DTCMRAM AT> FLASH
+  } >RAM_D1 AT> FLASH
 
 
   /* Uninitialized data section */
@@ -197,7 +201,7 @@ SECTIONS
     . = ALIGN(4);
     _ebss = .;         /* define a global symbol at bss end */
     __bss_end__ = _ebss;
-  } >DTCMRAM
+  } >RAM_D1
 
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
@@ -208,7 +212,7 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-  } >DTCMRAM
+  } >RAM_D1
 
 
 
@@ -221,5 +225,3 @@ SECTIONS
   }
 
 }
-
-

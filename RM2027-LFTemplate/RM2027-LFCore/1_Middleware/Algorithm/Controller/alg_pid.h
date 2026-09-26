@@ -25,18 +25,18 @@
  * @brief 微分先行枚举
  *
  */
-enum EnumPidDFirst {
+enum PidDFirst_e {
     PidDFirstDisable = 0,
     PidDFirstEnable,
 };
 
 /**
  * @brief PID控制器类
- *        继承自 ClassController 基类
+ *        继承自 Controller 基类
  *        使用小驼峰命名规范
  *
  */
-class ClassPID : public ClassController {
+class PID : public Controller {
 public:
     /**
      * @brief 初始化控制器（重写基类纯虚函数）
@@ -74,7 +74,7 @@ public:
         float iVariableSpeedA = 0.0f,
         float iVariableSpeedB = 0.0f,
         float iSeparateThreshold = 0.0f,
-        EnumPidDFirst dFirst = PidDFirstDisable
+        PidDFirst_e dFirst = PidDFirstDisable
     );
 
     inline float getIntegralError();
@@ -135,7 +135,7 @@ protected:
     // 死区, Error在其绝对值内不输出
     float DeadZone;
     // 微分先行
-    EnumPidDFirst DFirst;
+    PidDFirst_e DFirst;
 
     // 常量
 
@@ -200,7 +200,7 @@ protected:
  *
  * @return float 积分误差值
  */
-inline float ClassPID::getIntegralError() {
+inline float PID::getIntegralError() {
     return (IntegralError);
 }
 
@@ -209,7 +209,7 @@ inline float ClassPID::getIntegralError() {
  *
  * @return float 输出值
  */
-inline float ClassPID::getOut() {
+inline float PID::getOut() {
     return (Out);
 }
 
@@ -218,7 +218,7 @@ inline float ClassPID::getOut() {
  *
  * @param kp PID的P
  */
-inline void ClassPID::setKP(float kp) {
+inline void PID::setKP(float kp) {
     KP = kp;
 }
 
@@ -227,7 +227,7 @@ inline void ClassPID::setKP(float kp) {
  *
  * @param ki PID的I
  */
-inline void ClassPID::setKI(float ki) {
+inline void PID::setKI(float ki) {
     KI = ki;
 }
 
@@ -236,7 +236,7 @@ inline void ClassPID::setKI(float ki) {
  *
  * @param kd PID的D
  */
-inline void ClassPID::setKD(float kd) {
+inline void PID::setKD(float kd) {
     KD = kd;
 }
 
@@ -245,7 +245,7 @@ inline void ClassPID::setKD(float kd) {
  *
  * @param kf 前馈
  */
-inline void ClassPID::setKF(float kf) {
+inline void PID::setKF(float kf) {
     KF = kf;
 }
 
@@ -254,7 +254,7 @@ inline void ClassPID::setKF(float kf) {
  *
  * @param iOutMax 积分限幅, 0为不限制
  */
-inline void ClassPID::setIOutMax(float iOutMax) {
+inline void PID::setIOutMax(float iOutMax) {
     IOutMax = iOutMax;
 }
 
@@ -263,7 +263,7 @@ inline void ClassPID::setIOutMax(float iOutMax) {
  *
  * @param outMax 输出限幅, 0为不限制
  */
-inline void ClassPID::setOutMax(float outMax) {
+inline void PID::setOutMax(float outMax) {
     OutMax = outMax;
 }
 
@@ -272,7 +272,7 @@ inline void ClassPID::setOutMax(float outMax) {
  *
  * @param iVariableSpeedA 定速内段阈值, 0为不限制
  */
-inline void ClassPID::setIVariableSpeedA(float iVariableSpeedA) {
+inline void PID::setIVariableSpeedA(float iVariableSpeedA) {
     IVariableSpeedA = iVariableSpeedA;
 }
 
@@ -281,7 +281,7 @@ inline void ClassPID::setIVariableSpeedA(float iVariableSpeedA) {
  *
  * @param iVariableSpeedB 变速区间, 0为不限制
  */
-inline void ClassPID::setIVariableSpeedB(float iVariableSpeedB) {
+inline void PID::setIVariableSpeedB(float iVariableSpeedB) {
     IVariableSpeedB = iVariableSpeedB;
 }
 
@@ -290,7 +290,7 @@ inline void ClassPID::setIVariableSpeedB(float iVariableSpeedB) {
  *
  * @param iSeparateThreshold 积分分离阈值，需为正数, 0为不限制
  */
-inline void ClassPID::setISeparateThreshold(float iSeparateThreshold) {
+inline void PID::setISeparateThreshold(float iSeparateThreshold) {
     ISeparateThreshold = iSeparateThreshold;
 }
 
@@ -299,7 +299,7 @@ inline void ClassPID::setISeparateThreshold(float iSeparateThreshold) {
  *
  * @param target 目标值
  */
-inline void ClassPID::setTarget(float target) {
+inline void PID::setTarget(float target) {
     Target = target;
 }
 
@@ -308,7 +308,7 @@ inline void ClassPID::setTarget(float target) {
  *
  * @param now 当前值
  */
-inline void ClassPID::setNow(float now) {
+inline void PID::setNow(float now) {
     Now = now;
 }
 
@@ -317,7 +317,7 @@ inline void ClassPID::setNow(float now) {
  *
  * @param integralError 积分值
  */
-inline void ClassPID::setIntegralError(float integralError) {
+inline void PID::setIntegralError(float integralError) {
     IntegralError = integralError;
 }
 

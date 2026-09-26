@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    cordic.h
+  * @file    bdma.h
   * @brief   This file contains all the function prototypes for
-  *          the cordic.c file
+  *          the bdma.c file
   ******************************************************************************
   * @attention
   *
@@ -18,8 +18,8 @@
   */
 /* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __CORDIC_H__
-#define __CORDIC_H__
+#ifndef __BDMA_H__
+#define __BDMA_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,17 +28,17 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+/* DMA memory to memory transfer handles -------------------------------------*/
+
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-
-extern CORDIC_HandleTypeDef hcordic;
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_CORDIC_Init(void);
+void MX_BDMA_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 
@@ -48,5 +48,5 @@ void MX_CORDIC_Init(void);
 }
 #endif
 
-#endif /* __CORDIC_H__ */
+#endif /* __BDMA_H__ */
 

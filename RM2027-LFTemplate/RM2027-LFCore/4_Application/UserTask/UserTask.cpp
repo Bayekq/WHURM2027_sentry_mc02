@@ -11,12 +11,8 @@
 #include "main.h"
 #include "task.h" // Include task
 #include "UserTask.h" // Include user task header]
-#include "iwdg.h" // Include IWDG header file
 
-extern IWDG_HandleTypeDef hiwdg1; // External declaration of the IWDG handle
-
-static int i = 0;
-static int j = 0;
+bool init_finished = false;
 
 /**
  * @brief User task function(Template)
@@ -30,8 +26,8 @@ void userTask(void*) {
     while (true) {
         /* Your user layer codes in loop begin here*/
         /*=================================================*/
-        // i++;
-        // j--;
+        static bool init_finished = true;
+
 
         // HAL_IWDG_Refresh(&hiwdg1); // Refresh the IWDG to prevent reset
         /* Your user layer codes in loop end here*/

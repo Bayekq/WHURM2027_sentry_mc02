@@ -28,7 +28,7 @@
  *        使用默认参数初始化PID控制器
  *
  */
-void ClassPID::init() {
+void PID::init() {
     // 设置控制器类型（基类成员）
     controllerType = ControllerPid;
 
@@ -73,7 +73,7 @@ void ClassPID::init() {
  * @param iSeparateThreshold 积分分离误差阈值
  * @param dFirst 是否开启微分先行
  */
-void ClassPID::init(
+void PID::init(
     float kp,
     float ki,
     float kd,
@@ -85,7 +85,7 @@ void ClassPID::init(
     float iVariableSpeedA,
     float iVariableSpeedB,
     float iSeparateThreshold,
-    EnumPidDFirst dFirst
+    PidDFirst_e dFirst
 ) {
     // 设置控制器类型（基类成员）
     controllerType = ControllerPid;
@@ -110,7 +110,7 @@ void ClassPID::init(
  *
  * @return float 输出值
  */
-void ClassPID::timCalculatePeriodElapsedCallback() {
+void PID::timCalculatePeriodElapsedCallback() {
     // P输出
     float pOut = 0.0f;
     // I输出
@@ -127,7 +127,7 @@ void ClassPID::timCalculatePeriodElapsedCallback() {
     float speedRatio = 0.0f;
 
     error = Target - Now;
-    absError = Math_Abs(error);
+    absError = basic_math::abs(error);
 
     // 判断死区
     if (absError < DeadZone) {
@@ -162,7 +162,7 @@ void ClassPID::timCalculatePeriodElapsedCallback() {
     }
     // 积分限幅
     if (IOutMax != 0.0f) {
-        BasicMath::constrain(&IntegralError, -IOutMax / KI, IOutMax / KI);
+        basic_math::constrain(&IntegralError, -IOutMax / KI, IOutMax / KI);
     }
     if (ISeparateThreshold == 0.0f) {
         // 没有积分分离
@@ -201,7 +201,7 @@ void ClassPID::timCalculatePeriodElapsedCallback() {
 
     // 输出限幅
     if (OutMax != 0.0f) {
-        BasicMath::constrain(&Out, -OutMax, OutMax);
+        basic_math::constrain(&Out, -OutMax, OutMax);
     }
 
     // 善后工作

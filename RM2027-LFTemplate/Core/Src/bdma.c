@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : mdma.c
-  * Description        : This file provides code for the configuration
-  *                      of all the requested global MDMA transfers.
+  * @file    bdma.c
+  * @brief   This file provides code for the configuration
+  *          of all the requested memory to memory DMA transfers.
   ******************************************************************************
   * @attention
   *
@@ -19,14 +19,14 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "mdma.h"
+#include "bdma.h"
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
 /*----------------------------------------------------------------------------*/
-/* Configure MDMA                                                              */
+/* Configure DMA                                                              */
 /*----------------------------------------------------------------------------*/
 
 /* USER CODE BEGIN 1 */
@@ -34,30 +34,22 @@
 /* USER CODE END 1 */
 
 /**
-  * Enable MDMA controller clock
+  * Enable DMA controller clock
   */
-void MX_MDMA_Init(void)
+void MX_BDMA_Init(void)
 {
 
-  /* MDMA controller clock enable */
-  __HAL_RCC_MDMA_CLK_ENABLE();
-  /* Local variables */
+  /* DMA controller clock enable */
+  __HAL_RCC_BDMA_CLK_ENABLE();
 
-  /* MDMA interrupt initialization */
-  /* MDMA_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(MDMA_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(MDMA_IRQn);
+  /* DMA interrupt init */
+  /* BDMA_Channel0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(BDMA_Channel0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(BDMA_Channel0_IRQn);
 
 }
+
 /* USER CODE BEGIN 2 */
 
 /* USER CODE END 2 */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 

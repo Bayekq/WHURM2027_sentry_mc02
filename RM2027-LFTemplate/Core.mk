@@ -81,9 +81,9 @@ COMPILERFLAGS += -Wno-unused-const-variable			# Disable warning about unused con
 COMPILERFLAGS += -fdiagnostics-color=auto			# Enable colored diagnostics
 
 # Debug
-ifeq ($(DEBUG), -g0)
-CFLAGS += -g -gdwarf-2
-endif
+# ifeq ($(DEBUG), -g0)
+# CFLAGS += -g -gdwarf-2
+# endif
 
 
 # # Generate dependency information
@@ -95,8 +95,10 @@ COMPILERFLAGS += -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@"
 ASFLAGS = $(AS_DEFS) $(AS_INCLUDES) $(COMPILERFLAGS)
 
 CFLAGS = $(C_DEFS) $(C_INCLUDES) $(CSTD) $(COMPILERFLAGS)
+CFLAGS += $(DEBUG) $(OPT)
 
 CPPFLAGS = $(C_DEFS) $(C_INCLUDES) $(CPPSTD) $(COMPILERFLAGS)
+CPPFLAGS += $(DEBUG) $(OPT) 
 CPPFLAGS += -fno-exceptions							# Disable exceptions
 CPPFLAGS += -fno-rtti								# Disable rtti (eg: typeid, dynamic_cast)
 CPPFLAGS += -fno-threadsafe-statics					# Disable thread safe statics
@@ -110,8 +112,8 @@ LDSCRIPT = STM32H723XG_FLASH_modified.ld
 # LDSCRIPT = STM32H723XG_FLASH.ld
 
 # libraries
-LIBS = -lc -lm -lnosys 
-LIBDIR = 
+LIBS = -lc -lm -lnosys -larm_cortexM7lfsp_math
+LIBDIR = -LMiddlewares/ST/ARM/DSP/Lib
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
 # Hide details (silent mode)

@@ -31,7 +31,7 @@ extern const float BasicMathCelsiusToKelvin;
 
 /* Exported function declarations --------------------------------------------*/
 
-namespace BasicMath {
+namespace basic_math {
 
 void booleanLogicalNot(bool* value);
 
@@ -110,11 +110,7 @@ template <typename Type>
 Type abs(Type x) {
   return ((x > 0) ? x : -x);
 }
-}  // namespace BasicMath
-
-// 兼容性宏定义（可选，方便过渡）
-#define Math_Constrain(x, min, max) BasicMath::constrain((x), (min), (max))
-#define Math_Abs(x) BasicMath::abs((x))
+}  // namespace basic_math
 
 #endif
 

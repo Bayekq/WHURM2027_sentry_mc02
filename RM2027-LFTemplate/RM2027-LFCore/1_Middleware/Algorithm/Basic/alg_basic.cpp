@@ -37,7 +37,7 @@ const float BasicMathCelsiusToKelvin = 273.15f;
  *
  * @param value 布尔值地址
  */
-void BasicMath::booleanLogicalNot(bool* value)
+void basic_math::booleanLogicalNot(bool* value)
 {
     if (!*value)
     {
@@ -54,7 +54,7 @@ void BasicMath::booleanLogicalNot(bool* value)
  *
  * @param address 地址
  */
-void BasicMath::endianReverse16(void* address)
+void basic_math::endianReverse16(void* address)
 {
     uint8_t* tmpAddress8;
     uint16_t* tmpAddress16;
@@ -70,7 +70,7 @@ void BasicMath::endianReverse16(void* address)
  * @param destination 目标存储地址
  * @return uint16_t 结果
  */
-uint16_t BasicMath::endianReverse16(void* source, void* destination)
+uint16_t basic_math::endianReverse16(void* source, void* destination)
 {
     uint8_t* tmpAddress8;
     uint16_t tmpValue16;
@@ -94,7 +94,7 @@ uint16_t BasicMath::endianReverse16(void* source, void* destination)
  *
  * @param address 地址
  */
-void BasicMath::endianReverse32(void* address)
+void basic_math::endianReverse32(void* address)
 {
     uint8_t* tmpAddress8;
     uint32_t* tmpAddress32;
@@ -110,7 +110,7 @@ void BasicMath::endianReverse32(void* address)
  * @param destination 目标存储地址
  * @return uint32_t 结果
  */
-uint32_t BasicMath::endianReverse32(void* source, void* destination)
+uint32_t basic_math::endianReverse32(void* source, void* destination)
 {
     uint8_t* tmpAddress8;
     uint32_t tmpValue32;
@@ -138,7 +138,7 @@ uint32_t BasicMath::endianReverse32(void* source, void* destination)
  * @param length 被加的数据的数量, 注意不是字节数
  * @return uint8_t 结果
  */
-uint8_t BasicMath::sum8(const uint8_t* address, uint32_t length)
+uint8_t basic_math::sum8(const uint8_t* address, uint32_t length)
 {
     uint8_t sum = 0;
     for (uint32_t i = 0; i < length; i++)
@@ -155,7 +155,7 @@ uint8_t BasicMath::sum8(const uint8_t* address, uint32_t length)
  * @param length 被加的数据的数量, 注意不是字节数
  * @return uint16_t 结果
  */
-uint16_t BasicMath::sum16(const uint16_t* address, uint32_t length)
+uint16_t basic_math::sum16(const uint16_t* address, uint32_t length)
 {
     uint16_t sum = 0;
     for (uint32_t i = 0; i < length; i++)
@@ -172,7 +172,7 @@ uint16_t BasicMath::sum16(const uint16_t* address, uint32_t length)
  * @param length 被加的数据的数量, 注意不是字节数
  * @return uint32_t 结果
  */
-uint32_t BasicMath::sum32(const uint32_t* address, uint32_t length)
+uint32_t basic_math::sum32(const uint32_t* address, uint32_t length)
 {
     uint32_t sum = 0;
     for (uint32_t i = 0; i < length; i++)
@@ -188,10 +188,10 @@ uint32_t BasicMath::sum32(const uint32_t* address, uint32_t length)
  * @param x 输入
  * @return float 输出
  */
-float BasicMath::sinc(float x)
+float basic_math::sinc(float x)
 {
     // 分母为0则按极限求法
-    if (BasicMath::abs(x) <= 2.0f * FLT_EPSILON)
+    if (basic_math::abs(x) <= 2.0f * FLT_EPSILON)
     {
         return (1.0f);
     }
@@ -209,7 +209,7 @@ float BasicMath::sinc(float x)
  * @param int2 整型2
  * @return int32_t 整型
  */
-int32_t BasicMath::floatToInt(float x, float float1, float float2, int32_t int1, int32_t int2)
+int32_t basic_math::floatToInt(float x, float float1, float float2, int32_t int1, int32_t int2)
 {
     float tmp = (x - float1) / (float2 - float1);
     auto out = (int32_t)(tmp * (float) (int2 - int1) + (float) (int1));
@@ -226,7 +226,7 @@ int32_t BasicMath::floatToInt(float x, float float1, float float2, int32_t int1,
  * @param float2 浮点数2
  * @return float 浮点数
  */
-float BasicMath::intToFloat(int32_t x, int32_t int1, int32_t int2, float float1, float float2)
+float basic_math::intToFloat(int32_t x, int32_t int1, int32_t int2, float float1, float float2)
 {
     float tmp = (float) (x - int1) / (float) (int2 - int1);
     float out = tmp * (float2 - float1) + float1;
@@ -239,7 +239,7 @@ float BasicMath::intToFloat(int32_t x, int32_t int1, int32_t int2, float float1,
  * @param x 浮点数
  * @return 是否为NaN或非正规数
  */
-bool BasicMath::isInvalidFloat(float x)
+bool basic_math::isInvalidFloat(float x)
 {
     uint32_t bits;
     std::memcpy(&bits, &x, sizeof(bits));
@@ -271,7 +271,7 @@ bool BasicMath::isInvalidFloat(float x)
  * @param modulus 模数
  * @return 返回的归化数, 介于 ±modulus / 2 之间
  */
-float BasicMath::modulusNormalization(float x, float modulus)
+float basic_math::modulusNormalization(float x, float modulus)
 {
     float tmp;
 

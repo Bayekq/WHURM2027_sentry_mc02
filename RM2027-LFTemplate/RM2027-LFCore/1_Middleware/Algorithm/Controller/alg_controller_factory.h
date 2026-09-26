@@ -30,7 +30,7 @@
  *       - 未来可扩展：模糊控制、自适应控制、MPC等
  *
  */
-class ClassControllerFactory {
+class ControllerFactory {
 public:
     /**
      * @brief 创建控制器实例
@@ -51,10 +51,10 @@ public:
      * }
      * @endcode
      */
-    ClassController* createController(EnumControllerType type);
+    Controller* createController(EnumControllerType type);
 
     /**
-     * @brief 创建PID控制器并配置参数
+     * @brief 创建PID控制器并配置参数（静态方法）
      *
      * @param kp P值
      * @param ki I值
@@ -70,7 +70,7 @@ public:
      * @param dFirst 是否开启微分先行 (默认: PidDFirstDisable)
      * @return ClassController* 配置好的PID控制器指针
      */
-    ClassController* createPid(
+    static Controller* createPid(
         float kp,
         float ki,
         float kd,
@@ -82,7 +82,7 @@ public:
         float iVariableSpeedA = 0.0f,
         float iVariableSpeedB = 0.0f,
         float iSeparateThreshold = 0.0f,
-        EnumPidDFirst dFirst = PidDFirstDisable
+        PidDFirst_e dFirst = PidDFirstDisable
     );
 
 private:
