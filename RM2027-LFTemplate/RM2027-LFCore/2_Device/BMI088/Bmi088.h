@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
 #include "bmi088_reg.h"
-#include "stdint.h"
+#include "arm_math.h"
 #include "stdbool.h"
 
 #define BMI088_TEMP_FACTOR 0.125f

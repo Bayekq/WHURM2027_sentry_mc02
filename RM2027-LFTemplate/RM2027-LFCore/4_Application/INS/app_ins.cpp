@@ -27,8 +27,6 @@
   */
 INS_Info_Typedef INS_Info; 
 
-float Angle=0.f;
-
 /**
   * @brief the array that contains the data of LPF2p coefficients.
   */
@@ -140,8 +138,6 @@ void INS_Task(void const * argument)
       // TODO: Add temperature control logic here
 			// BMI088_Temp_Control(BMI088_Info.Temperature); 
 		}
-		
-    Angle = BMI088_Info.Temperature;
 		
     osDelayUntil(&INS_Task_SysTick,1);
 		
