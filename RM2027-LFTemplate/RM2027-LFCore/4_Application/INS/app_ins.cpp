@@ -17,7 +17,6 @@
 #include "app_ins.h"
 #include "Bmi088.h"
 #include "alg_lpf.h"
-#include "alg_controller_factory.h"
 #include "tim.h"
 #include "Quaternion.h"
 #include "Config.h"

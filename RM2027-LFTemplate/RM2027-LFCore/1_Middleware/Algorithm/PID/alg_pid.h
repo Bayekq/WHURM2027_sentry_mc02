@@ -15,7 +15,6 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "alg_basic.h"
-#include "alg_controller.h"
 
 /* Exported macros -----------------------------------------------------------*/
 
@@ -36,14 +35,14 @@ enum PidDFirst_e {
  *        使用小驼峰命名规范
  *
  */
-class PID : public Controller {
+class PID  {
 public:
     /**
      * @brief 初始化控制器（重写基类纯虚函数）
      *        使用默认参数初始化PID控制器
      *
      */
-    void init() override;
+    void init();
 
     /**
      * @brief PID参数配置（PID特有方法）
@@ -104,28 +103,30 @@ public:
      *        在定时器中断中周期性调用
      *
      */
-    void timCalculatePeriodElapsedCallback() override;
+    void timCalculatePeriodElapsedCallback();
 
     /**
      * @brief 获取输出值（重写基类方法）
      *
      * @return float PID输出值
      */
-    float getOut() override;
+    float getOut();
 
     /**
      * @brief 设置目标值（重写基类方法）
      *
      * @param target 目标值
      */
-    void setTarget(float target) override;
+    void setTarget(float target);
 
     /**
      * @brief 设置当前值/反馈值（重写基类方法）
      *
      * @param now 当前值
      */
-    void setNow(float now) override;
+    void setNow(float now);
+
+
 
 protected:
     // 初始化相关常量

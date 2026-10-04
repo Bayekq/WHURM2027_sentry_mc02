@@ -29,8 +29,6 @@
  *
  */
 void PID::init() {
-    // 设置控制器类型（基类成员）
-    controllerType = ControllerPid;
 
     // 使用默认参数初始化PID
     KP = 0.0f;
@@ -87,8 +85,6 @@ void PID::init(
     float iSeparateThreshold,
     PidDFirst_e dFirst
 ) {
-    // 设置控制器类型（基类成员）
-    controllerType = ControllerPid;
 
     // 配置PID参数
     KP = kp;
