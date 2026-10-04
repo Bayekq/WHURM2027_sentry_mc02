@@ -1,0 +1,49 @@
+{
+  "version": 4,
+  "configurations": [
+    {
+      "name": "STM32H723 (GCC)",
+      "compilerPath": "C:/msys64/ucrt64/bin/arm-none-eabi-gcc.exe",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++14",
+      "intelliSenseMode": "gcc-arm",
+      "defines": [
+        "USE_PWR_LDO_SUPPLY",
+        "USE_HAL_DRIVER",
+        "STM32H723xx"
+      ],
+      "includePath": [
+        "${workspaceFolder}/Core/Inc",
+        "${workspaceFolder}/USB_DEVICE/App",
+        "${workspaceFolder}/USB_DEVICE/Target",
+        "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc",
+        "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy",
+        "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32H7xx/Include",
+        "${workspaceFolder}/Drivers/CMSIS/Include",
+        "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/include",
+        "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F",
+        "${workspaceFolder}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS",
+        "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+        "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc",
+        "${workspaceFolder}/Middlewares/ST/ARM/DSP/Inc",
+        "${workspaceFolder}/RM2027-LFCore",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/Basic",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/Kalman_Filter",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/LPF",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/PID",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/Quatertion",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/CAN",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/GPIO",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/SPI",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/Tick",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/Uart",
+        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/USB",
+        "${workspaceFolder}/RM2027-LFCore/2_Device/BMI088",
+        "${workspaceFolder}/RM2027-LFCore/2_Device/BSP",
+        "${workspaceFolder}/RM2027-LFCore/2_Device/NUC",
+        "${workspaceFolder}/RM2027-LFCore/4_Application/INS",
+        "${workspaceFolder}/RM2027-LFCore/3_LuojiaFox"
+      ]
+    }
+  ]
+}
