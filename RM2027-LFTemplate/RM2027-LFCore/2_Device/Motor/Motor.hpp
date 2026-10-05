@@ -20,6 +20,15 @@
 /* Exported types ------------------------------------------------------------*/
 
 /** 
+* @brief 电机 CAN 收发标识符
+*/
+struct Motor_CANFrameInfo_typedef {
+    uint32_t TxIdentifier;  /*!< 发送标识符 */
+    uint32_t RxIdentifier;  /*!< 接收标识符 */
+};
+
+
+/** 
 * @brief DJI 电机类型 
 */
 enum DJI_Motor_Type_e {
@@ -28,6 +37,70 @@ enum DJI_Motor_Type_e {
     DJI_M2006,       /*!< M2006 */
     DJI_MOTOR_TYPE_NUM,     /*!< 类型总数 */
 };
+
+
+/** 
+* @brief DJI 电机数据
+*/
+struct DJI_Motor_Data_Typedef{
+    bool Initlized;     /*!< 初始化标志 */
+    int16_t Current;      /*!< 电流 */
+    int16_t Velocity;     /*!< 转速, rpm */
+    int16_t Encoder;      /*!< 编码器原始值 */
+    int16_t Last_Encoder;  /*!< 上次编码器值 */
+    float Angle;          /*!< 角度, deg */
+    uint8_t Temperature;  /*!< 温度 */
+};
+
+
+/**
+* @brief DJI 电机（GM6020 / M3508 / M2006）
+*/
+class DJI_Motor_Info_Class {
+public:
+    DJI_Motor_Info_Class();
+
+    /** @brief 配置电机类型与 CAN 收发标识符 */
+    void Motor_Init(DJI_Motor_Type_e type, uint32_t txIdentifier, uint32_t rxIdentifier);
+
+    /** @brief 用一帧 CAN 数据刷新电机状态 */
+    void Motor_Update(uint32_t identifier, const uint8_t *rxBuffer);
+
+    /**
+     * @brief 把 4 台 DJI 电机的电流打包成一帧发送
+     *
+     * @param txFrame    已用 BSP_FDCAN_InitTxFrame 初始化过的发送帧
+     * @param identifier 0x200（M3508/M2006 的 ID 1~4）、0x1FF（同型号 ID 5~8
+     *                   或 GM6020 的 ID 1~4）、0x2FF（GM6020 的 ID 5~7）
+     * @param current    4 台电机的电流，范围 -16384 ~ 16384
+     */
+    static void sendCurrent(FDCAN_TxFrame_TypeDef *txFrame, uint32_t identifier, const int16_t current[4]);
+
+    bool isInitialized() const;
+    DJI_Motor_Type_e getType() const;
+    const  Motor_CANFrameInfo_typedef &getCanFrame() const;
+    const  DJI_Motor_Data_Typedef &getData() const;
+
+private:
+    /** @brief 编码器值换算为累计角度, deg */
+    float DJI_Motor_Encoder_To_Anglesum(float torqueRatio, uint16_t maxEncoder);
+
+    /** @brief 编码器值换算为 -180~180 角度, deg */
+    float DJI_Motor_Encoder_To_Angle(float torqueRatio, uint16_t maxEncoder);
+
+    /** @brief 把角度循环限制到 [minValue, maxValue] */
+    static float F_Loop_Constrain(float input, float minValue, float maxValue);
+
+    DJI_Motor_Type_e type;
+    Motor_CANFrameInfo_typedef canFrame;
+    DJI_Motor_Data_Typedef data;
+};
+
+
+
+
+
+
 
 /** 
 * @brief 达妙电机控制模式 
@@ -44,23 +117,6 @@ enum DM_Motor_CMD_Type_e {
     Motor_Disable,           /*!< 失能 */
     Motor_Save_Zero_Position,  /*!< 保存零点 */
     DM_Motor_CMD_Type_Num,               /*!< 指令总数 */
-};
-
-/** @brief 电机 CAN 收发标识符 */
-struct Motor_CANFrameInfo_typedef {
-    uint32_t TxIdentifier;  /*!< 发送标识符 */
-    uint32_t RxIdentifier;  /*!< 接收标识符 */
-};
-
-/** @brief DJI 电机数据 */
-struct DJI_Motor_Data_Typedef{
-    bool Initlized;     /*!< 初始化标志 */
-    int16_t Current;      /*!< 电流 */
-    int16_t Velocity;     /*!< 转速, rpm */
-    int16_t Encoder;      /*!< 编码器原始值 */
-    int16_t Last_Encoder;  /*!< 上次编码器值 */
-    float Angle;          /*!< 角度, deg */
-    uint8_t Temperature;  /*!< 温度 */
 };
 
 /** @brief 达妙电机参数范围 */
@@ -93,49 +149,6 @@ struct DM_Motor_Contorl_Info_Typedef {
     float KD;        /*!< 速度增益 */
     float Torque;    /*!< 前馈扭矩 */
     float Angle;     /*!< 目标角度, deg */
-};
-
-/**
- * @brief DJI 电机（GM6020 / M3508 / M2006）
- */
-class DJI_Motor_Info_Class {
-public:
-    DJI_Motor_Info_Class();
-
-    /** @brief 配置电机类型与 CAN 收发标识符 */
-    void Motor_Init(DJI_Motor_Type_e type, uint32_t txIdentifier, uint32_t rxIdentifier);
-
-    /** @brief 用一帧 CAN 数据刷新电机状态 */
-    void Motor_Update(uint32_t identifier, const uint8_t *rxBuffer);
-
-    /**
-     * @brief 把 4 台 DJI 电机的电流打包成一帧发送
-     *
-     * @param txFrame    已用 BSP_FDCAN_InitTxFrame 初始化过的发送帧
-     * @param identifier 0x200（M3508/M2006 的 ID 1~4）、0x1FF（同型号 ID 5~8
-     *                   或 GM6020 的 ID 1~4）、0x2FF（GM6020 的 ID 5~7）
-     * @param current    4 台电机的电流，范围 -16384 ~ 16384
-     */
-    static void sendCurrent(FDCAN_TxFrame_TypeDef *txFrame, uint32_t identifier, const int16_t current[4]);
-
-    bool isInitialized() const;
-     DJI_Motor_Type_e getType() const;
-    const  Motor_CANFrameInfo_typedef &getCanFrame() const;
-    const  DJI_Motor_Data_Typedef &getData() const;
-
-private:
-    /** @brief 编码器值换算为累计角度, deg */
-    float DJI_Motor_Encoder_To_Anglesum(float torqueRatio, uint16_t maxEncoder);
-
-    /** @brief 编码器值换算为 -180~180 角度, deg */
-    float DJI_Motor_Encoder_To_Angle(float torqueRatio, uint16_t maxEncoder);
-
-    /** @brief 把角度循环限制到 [minValue, maxValue] */
-    static float F_Loop_Constrain(float input, float minValue, float maxValue);
-
-    DJI_Motor_Type_e type;
-    Motor_CANFrameInfo_typedef canFrame;
-    DJI_Motor_Data_Typedef data;
 };
 
 /**

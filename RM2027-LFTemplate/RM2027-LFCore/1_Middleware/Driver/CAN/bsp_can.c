@@ -76,6 +76,7 @@ static void BSP_FDCAN_FilterInit(FDCAN_HandleTypeDef *hcan)
     filter.FilterIndex = 0;
     filter.FilterType = FDCAN_FILTER_MASK;
     filter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+//只想接收固定 CAN ID 时修改，FilterID1 = 期望匹配的 CAN 标识符，FilterID2 = 掩码，决定哪些位需要比较
     filter.FilterID1 = 0x000;
     filter.FilterID2 = 0x000;   /* 掩码全 0 表示不比较任何位，即全部接收 */
 

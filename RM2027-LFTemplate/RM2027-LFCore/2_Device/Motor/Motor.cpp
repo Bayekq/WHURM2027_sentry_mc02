@@ -106,7 +106,7 @@ const DJI_Motor_Data_Typedef &DJI_Motor_Info_Class::getData() const {
 }
 
 /**
- * @brief 把编码器值换算为累计角度，超过 180 度继续累加
+ * @brief 把编码器值换算为累计角度，超过 180 度继续累加，torqueRatio：减速比；maxEncoder：电机编码器一圈的计数
  */
 float DJI_Motor_Info_Class::DJI_Motor_Encoder_To_Anglesum(float torqueRatio, uint16_t maxEncoder) {
     float res1 = 0, res2 = 0;
