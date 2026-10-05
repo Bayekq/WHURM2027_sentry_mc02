@@ -25,8 +25,6 @@ static void BSP_FDCAN_FilterInit(FDCAN_HandleTypeDef *hcan);
 void BSP_FDCAN_Init(void)
 {
     BSP_FDCAN_FilterInit(&hfdcan1);
-    BSP_FDCAN_FilterInit(&hfdcan2);
-    BSP_FDCAN_FilterInit(&hfdcan3);
 }
 
 void BSP_FDCAN_InitTxFrame(FDCAN_TxFrame_TypeDef *frame, FDCAN_HandleTypeDef *hcan)
