@@ -5,9 +5,17 @@
   "files.associations": {
     "*.ld": "ld",
     "*.s": "asm",
-    "*.h": "c"
+    "*.h": "cpp",
+    "*.hpp": "cpp",
+    "*.unuse": "cpp"
   },
   "makefile.configureOnOpen": false,
   "cmake.configureOnOpen": false,
-  "cmake.sourceDirectory": "${workspaceFolder}"
+  "cmake.sourceDirectory": "${workspaceFolder}",
+  "emberprobe.armToolchainPath": "C:\\msys64\\ucrt64\\bin",
+  "emberprobe.armToolchainPrefix": "arm-none-eabi-",
+  "emberprobe.gdbPath": "C:\\msys64\\mingw64\\bin\\gdb-multiarch.exe",
+  "emberprobe.objdumpPath": "C:\\msys64\\ucrt64\\bin\\arm-none-eabi-objdump.exe",
+  "emberprobe.openocdPath": "c:\\Users\\hg\\AppData\\Roaming\\Code\\User\\globalStorage\\bakesheep.emberprobe\\emberprobe\\openocd\\bin\\openocd.exe",
+  "emberprobe.sampleFrequencyHz": 30
 }

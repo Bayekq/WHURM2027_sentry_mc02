@@ -2,9 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug (ST-Link + OpenOCD)",
+      "type": "emberprobe",
+      "request": "launch",
+      "name": "EmberProbe: Launch",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/LuojiaFox_H7_Template.elf",
+      "runToEntryPoint": "main"
+    },
+    {
       "type": "cortex-debug",
       "request": "launch",
+      "name": "Cortex-Debug (需先安装该扩展)",
       "servertype": "openocd",
       "cwd": "${workspaceFolder}",
       "executable": "${workspaceFolder}/build/LuojiaFox_H7_Template.elf",

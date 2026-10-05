@@ -26,23 +26,7 @@
         "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
         "${workspaceFolder}/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc",
         "${workspaceFolder}/Middlewares/ST/ARM/DSP/Inc",
-        "${workspaceFolder}/RM2027-LFCore",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/Basic",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/Kalman_Filter",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/LPF",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/PID",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Algorithm/Quatertion",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/CAN",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/GPIO",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/SPI",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/Tick",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/Uart",
-        "${workspaceFolder}/RM2027-LFCore/1_Middleware/Driver/USB",
-        "${workspaceFolder}/RM2027-LFCore/2_Device/BMI088",
-        "${workspaceFolder}/RM2027-LFCore/2_Device/BSP",
-        "${workspaceFolder}/RM2027-LFCore/2_Device/NUC",
-        "${workspaceFolder}/RM2027-LFCore/4_Application/INS",
-        "${workspaceFolder}/RM2027-LFCore/3_LuojiaFox"
+        "${workspaceFolder}/RM2027-LFCore/**"
       ]
     }
   ]
