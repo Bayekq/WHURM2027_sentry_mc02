@@ -32,6 +32,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "dvc_bsp.h"
+#include "remote_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -129,6 +130,7 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   bspInit();
+  remote_control_init();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
