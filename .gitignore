@@ -2,12 +2,11 @@
 *(*)*
 
 # MATLAB files
-application/chassis/matlab_balance/slprj/
 */slprj/
 */codegen/
 *.prj
 
-# Keil v5 files
+# build files
 *.bak
 *.lst
 *.lnp
@@ -30,7 +29,8 @@ application/chassis/matlab_balance/slprj/
 *.sct
 *JLinkLog.txt
 *.dbgconf
-.vscode/tags
+*.bin
+*.elf
 *.hex
 *.lnk
 
