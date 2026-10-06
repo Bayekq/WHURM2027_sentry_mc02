@@ -7,32 +7,7 @@
 *.prj
 
 # build files
-*.bak
-*.lst
-*.lnp
-*.obj
-*.tmp
-*.TMP
-*.__i
-*.crf
-*.o
-*.d
-*.axf
-*.dep
-*.uvopt
-*.htm
-*.hsc
-~*
-*.map
-*uvgui*
-*.uvoptx
-*.sct
-*JLinkLog.txt
-*.dbgconf
-*.bin
-*.elf
-*.hex
-*.lnk
+build/
 
 *.scvd
 *.iex
