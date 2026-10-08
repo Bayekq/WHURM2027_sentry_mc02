@@ -22,6 +22,7 @@
 
 #include <math.h>
 
+// #include "smc.h"
 /* Private macros ------------------------------------------------------------*/
 
 /* GM6020 收发 ID，按实际接线修改 */
@@ -40,6 +41,24 @@
 #define PITCH_START_OFFSET_DEG 30.0f
 
 /* Private variables ---------------------------------------------------------*/
+//smc
+// static Sliding speedSmc;
+
+// static const fp32 speedSmcParam[9] = {
+//     1.0f,    // J
+//     5.0f,    // K
+//     0.05f,   // c
+//     0.0f,    // c1，VELSMC 不用
+//     0.0f,    // c2，VELSMC 不用
+//     0.0f,    // p，TFSMC 才用
+//     0.0f,    // q，TFSMC 才用
+//     0.0f,    // beta，TFSMC 才用
+//     0.1f     // epsilon
+// };
+
+
+
+
 
 DJI_Motor_Info_Class g_pitchMotor;
 
@@ -80,6 +99,14 @@ void Motor_Init(void)
     /* GM6020 */
     g_pitchMotor.Motor_Init(DJI_GM6020, GM6020_TX_ID, GM6020_RX_ID);
 
+    // SMC_init(
+    // &speedSmc,
+    // speedSmcParam,
+    // VELSMC,     // 当前 GM6020 使用的是速度环
+    // 1.0f,       // 饱和函数 limit
+    // 6000.0f,    // 输出限幅 u_max，第一次测试先不要用 8000
+    // 0.0f        // VELSMC 不使用位置误差阈值
+    // );
     /* 外环：角度误差 -> 目标转速，输出限幅 50rpm（约 300 度/秒） */
     pitchAnglePid.init(4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 25.0f, 0.001f,
                        0.0f, 0.0f, 0.0f, 0.0f, PidDFirstEnable);
@@ -110,8 +137,23 @@ void Motor_Control(void)
     pitchSpeedPid.setTarget(speedTarget);
     pitchSpeedPid.setNow(g_pitchMotor.getData().Velocity);
     pitchSpeedPid.timCalculatePeriodElapsedCallback();
-
     int16_t pitchOut = (int16_t)pitchSpeedPid.getOut();
+    // int16_t pitchOut = 0;
+
+    // if (!GetRcOffline() && g_pitchMotor.isInitialized()) {
+    // SMC_volErrorUpdate(
+    //     &speedSmc,
+    //     speedTarget,                              // 目标转速，单位 rpm
+    //     g_pitchMotor.getData().Velocity,          // 当前转速，单位 rpm
+    //     0.001f                                    // 1 ms 控制周期
+    // );
+
+    // pitchOut = (int16_t)SMC_calc(&speedSmc);
+    // } else {
+    // SMC_intgValClear(&speedSmc);
+    // speedSmc.u = 0.0f;
+    // pitchOut = 0;
+// }
 #else
     /* 收到第一帧反馈后，把目标设成当前角度，避免上电猛冲 */
     if (!pitchHoldReady && g_pitchMotor.isInitialized()) {
