@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_ins.h"
+#include "app_supercap.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,6 +48,12 @@
 /* USER CODE BEGIN Variables */
 osThreadId userTaskHandle;
 osThreadId insTaskHandle;
+uint32_t BoardLink_TaskBuffer[512];
+osStaticThreadDef_t BoardLink_TaskControlBlock;
+osThreadId BoardLink_TaskHandle;
+osThreadId superpower_handle;
+uint32_t SUPERPOWER_TaskBuffer[256];
+osStaticThreadDef_t SUPERPOWER_TaskControlBlock;
 /* USER CODE END Variables */
 osThreadId Start_INS_TaskHandle;
 uint32_t Start_INS_TaskBuffer[ 2048 ];
@@ -54,9 +61,6 @@ osStaticThreadDef_t Start_INS_TaskControlBlock;
 osThreadId Start_Control_TaskHandle;
 uint32_t Start_Control_TaskBuffer[ 1024 ];
 osStaticThreadDef_t Start_Control_TaskControlBlock;
-osThreadId Start_CAN_TaskHandle;
-uint32_t Start_CAN_TaskBuffer[ 1024 ];
-osStaticThreadDef_t Start_CAN_TaskControlBlock;
 osThreadId Start_Detect_TaskHandle;
 uint32_t Start_Detect_TaskBuffer[ 1024 ];
 osStaticThreadDef_t Start_Detect_TaskControlBlock;
@@ -76,12 +80,11 @@ osThreadId usb_task_handle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+void BoardLink_Task(void const * argument);
 /* USER CODE END FunctionPrototypes */
 
 void INS_Task(void const * argument);
 void Control_Task(void const * argument);
-void CAN_Task(void const * argument);
 void Detect_Task(void const * argument);
 void MiniPC_Task(void const * argument);
 void Shoot_Task(void const * argument);
@@ -142,10 +145,6 @@ void MX_FREERTOS_Init(void) {
   osThreadStaticDef(Start_Control_Task, Control_Task, osPriorityAboveNormal, 0, 1024, Start_Control_TaskBuffer, &Start_Control_TaskControlBlock);
   Start_Control_TaskHandle = osThreadCreate(osThread(Start_Control_Task), NULL);
 
-  /* definition and creation of Start_CAN_Task */
-  osThreadStaticDef(Start_CAN_Task, CAN_Task, osPriorityNormal, 0, 1024, Start_CAN_TaskBuffer, &Start_CAN_TaskControlBlock);
-  Start_CAN_TaskHandle = osThreadCreate(osThread(Start_CAN_Task), NULL);
-
   /* definition and creation of Start_Detect_Task */
   osThreadStaticDef(Start_Detect_Task, Detect_Task, osPriorityBelowNormal, 0, 1024, Start_Detect_TaskBuffer, &Start_Detect_TaskControlBlock);
   Start_Detect_TaskHandle = osThreadCreate(osThread(Start_Detect_Task), NULL);
@@ -159,12 +158,24 @@ void MX_FREERTOS_Init(void) {
   Start_Shoot_TaskHandle = osThreadCreate(osThread(Start_Shoot_Task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
+  /* 超电使用工程自身 CAN/裁判接口；反馈 ID 未配置时不创建任务。 */
+  if (supercapInit()) {
+    osThreadStaticDef(SUPERPOWER, superpower_task, osPriorityAboveNormal, 0, 256,
+                      SUPERPOWER_TaskBuffer, &SUPERPOWER_TaskControlBlock);
+    superpower_handle = osThreadCreate(osThread(SUPERPOWER), NULL);
+    if (superpower_handle == NULL) {
+      Error_Handler();
+    }
+  }
   /* 静态任务声明 */
   osThreadStaticDef(REFEREE, referee_task, osPriorityNormal, 0, 512, REFEREE_TaskBuffer, &REFEREE_TaskControlBlock);
   referee_usart_task_handle = osThreadCreate(osThread(REFEREE), NULL);
 
   osThreadStaticDef(USB, usb_task, osPriorityNormal, 0, 1024, USB_TaskBuffer, &USB_TaskControlBlock);
   usb_task_handle = osThreadCreate(osThread(USB), NULL);
+
+  osThreadStaticDef(BoardLink, BoardLink_Task, osPriorityAboveNormal, 0, 512, BoardLink_TaskBuffer, &BoardLink_TaskControlBlock);
+  BoardLink_TaskHandle = osThreadCreate(osThread(BoardLink), NULL);
    /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 }
@@ -205,24 +216,6 @@ __weak void Control_Task(void const * argument)
     osDelay(1);
   }
   /* USER CODE END Control_Task */
-}
-
-/* USER CODE BEGIN Header_CAN_Task */
-/**
-* @brief Function implementing the Start_CAN_Task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_CAN_Task */
-__weak void CAN_Task(void const * argument)
-{
-  /* USER CODE BEGIN CAN_Task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END CAN_Task */
 }
 
 /* USER CODE BEGIN Header_Detect_Task */
