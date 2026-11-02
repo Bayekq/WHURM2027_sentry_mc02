@@ -32,7 +32,9 @@
 /* USER CODE BEGIN Includes */
 #include "bsp_can.h"
 #include "dvc_bsp.h"
+#if BOARD_ROLE == 1
 #include "app_chassis.h"
+#endif
 #include "remote_control.h"
 /* USER CODE END Includes */
 
@@ -124,6 +126,9 @@ int main(void)
   MX_UART5_Init();
   MX_SPI2_Init();
   MX_TIM3_Init();
+#if BOARD_ROLE == 1
+  MX_TIM12_Init();
+#endif
   MX_UART7_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
@@ -140,7 +145,9 @@ int main(void)
   /* 启动三路 FDCAN；底盘/云台/发射模块随后自行注册电机 */
   bspFdcanInit();
 
+#if BOARD_ROLE == 1
   Chassis_Init();
+#endif
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */
