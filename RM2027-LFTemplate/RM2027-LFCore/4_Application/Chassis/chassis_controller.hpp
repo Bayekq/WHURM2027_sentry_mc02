@@ -41,6 +41,12 @@ struct ChassisFeedback {
     uint8_t slip_wheel_mask = 0U;
     bool slip_detection_valid = false;
     bool slip_detected = false;
+    /** @brief 轮电机温度、驱动故障与温度分级位图。 */
+    uint8_t temperature_c[kWheelCount] {};
+    uint8_t temperature_valid_mask = 0U;
+    uint8_t temperature_warning_mask = 0U;
+    uint8_t temperature_critical_mask = 0U;
+    uint8_t driver_fault_mask = 0U;
     /** @brief 姿态投影到车体平面的重力加速度，m/s²。 */
     float gravity_accel_x = 0.0f;
     float gravity_accel_y = 0.0f;

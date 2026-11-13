@@ -158,6 +158,24 @@ ChassisFeedback ChassisController::readFeedback(
         feedback.wheel_linear[i] = kWheelRadius * data.velocity_rad_s;
         feedback.all_wheels_online = feedback.all_wheels_online && online;
 
+        if (data.temperature_valid) {
+            feedback.temperature_valid_mask |=
+                static_cast<uint8_t>(1U << i);
+            feedback.temperature_c[i] = data.temperature;
+            if (data.temperature >= kWheelTemperatureWarningC) {
+                feedback.temperature_warning_mask |=
+                    static_cast<uint8_t>(1U << i);
+            }
+            if (data.temperature >= kWheelTemperatureCriticalC) {
+                feedback.temperature_critical_mask |=
+                    static_cast<uint8_t>(1U << i);
+            }
+        }
+        if (data.error_code != 0U) {
+            feedback.driver_fault_mask |=
+                static_cast<uint8_t>(1U << i);
+        }
+
         // 在线仅代表 CAN 反馈未超时；有限值检查阻止 NaN/Inf 进入轮速逆解。
         // bit i 对应逻辑轮序 i，供运动补偿器筛掉不可用轮速。
         if (online && std::isfinite(data.velocity_rad_s)) {

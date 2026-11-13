@@ -57,6 +57,7 @@ extern "C" void detect_hook(uint8_t toe)
         return;
     }
 
+    taskENTER_CRITICAL();
     error_t &item = error_list[toe];
 
     item.last_time = item.new_time;
@@ -66,6 +67,7 @@ extern "C" void detect_hook(uint8_t toe)
         item.is_lost = false;
         item.work_time = item.new_time;
     }
+    taskEXIT_CRITICAL();
 }
 
 //检测任务内部的周期巡检函数
@@ -146,4 +148,18 @@ extern "C" bool toe_is_error(uint8_t toe)
 extern "C" const error_t *get_error_list_point(void)
 {
     return error_list;
+}
+
+extern "C" uint32_t detectGetErrorMask(void)
+{
+    uint32_t mask = 0U;
+
+    taskENTER_CRITICAL();
+    for (uint8_t i = 0U; i < DETECT_COUNT; ++i) {
+        if (error_list[i].enable && error_list[i].error_exist) {
+            mask |= (1UL << i);
+        }
+    }
+    taskEXIT_CRITICAL();
+    return mask;
 }

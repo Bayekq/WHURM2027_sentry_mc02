@@ -25,6 +25,8 @@ constexpr float kWheelCenterDistance = 0.250f;
 constexpr float kWheelTorquePerAmp = 0.150f;
 constexpr float kWheelTorqueMax = 2.500f;
 constexpr float kC620MaxCurrent = 20.0f;
+constexpr uint8_t kWheelTemperatureWarningC = 75U;
+constexpr uint8_t kWheelTemperatureCriticalC = 90U;
 
 constexpr float kFallbackChassisPowerLimitW = 60.0f;
 constexpr float kPowerSafetyMargin = 0.90f;

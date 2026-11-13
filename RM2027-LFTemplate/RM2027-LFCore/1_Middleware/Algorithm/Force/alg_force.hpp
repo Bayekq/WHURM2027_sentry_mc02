@@ -141,7 +141,7 @@ public:
     buildOmniDistribution(float wheel_radius, float wheel_center_distance, float* matrix);
 
     /** @brief 查询求解器是否启用。 */
-    bool isEnable() const {
+    bool isEnable() const {                           //常量成员函数，即调用它时不能修改当前对象
         return this->enabled;
     }
 
@@ -222,7 +222,7 @@ private:
     bool feedforward_valid = true;                    /**< 前馈力矩输入有效 */
 
     /** @brief 初始化时复制的执行器参数。 */
-    ForceActuatorParam param[ALG_FORCE_ACTUATOR_MAX] {};
+    ForceActuatorParam param[ALG_FORCE_ACTUATOR_MAX] {};   //{}把所有元素初始化为 0.0f
 
     /** @brief 紧凑行优先分配矩阵，每行仅保存 dof_num 个元素。 */
     float distribution[ALG_FORCE_ACTUATOR_MAX * ALG_FORCE_DOF_MAX] {};

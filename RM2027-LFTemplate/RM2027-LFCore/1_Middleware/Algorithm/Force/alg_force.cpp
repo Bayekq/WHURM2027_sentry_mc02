@@ -33,7 +33,7 @@ bool allFinite(const float* values, uint8_t count)
 
 void clearOutput(float* torque, float* output, uint8_t count)
 {
-    std::fill_n(torque, count, 0.0f);
+    std::fill_n(torque, count, 0.0f);    //从 torque 指向的位置开始，将连续的前 count 个 float 元素全部写成 0.0f
     std::fill_n(output, count, 0.0f);
 }
 

@@ -68,4 +68,29 @@
 - `ForceSolver` 已接入，但轮级摩擦、惯性和关节重力模型参数当前为零；启用前必须完成实车标定。
 - 云台与底盘相对 Yaw 当前尚未接入，融合器中的 `yaw_rad` 固定为 0。
 
+## 安全与故障状态机
+
+`RM2027-LFCore/3_LuojiaFox/Safety` 汇总 `Detect`、轮电机故障码、温度、
+CAN Bus-off、裁判系统、超级电容和双板链路状态：
+
+| 状态 | 行为 |
+|---|---|
+| `Initializing` | 等待 IMU、四轮反馈和控制链稳定，禁止输出 |
+| `Active` | 全部核心条件正常，允许输出 |
+| `Degraded` | 核心控制安全但存在告警，允许输出并限制自动模式或电流 |
+| `Recovering` | 瞬态故障已消失，稳定观察期间仍禁止输出 |
+| `Standby` | 命令、轮反馈、速度估计或控制链不可用，输出零电流 |
+| `FaultLatched` | 急停、轮驱故障或 CAN Bus-off 已锁存，输出零电流 |
+
+轮电机故障、Bus-off 和急停不会自动恢复，需要在硬件故障消失后调用
+`safety::g_safety.requestReset()`。临界过温会先停车，待所有轮低于告警温度
+并稳定 1.5 秒后自动恢复；75 ℃ 告警时输出电流缩放到 65%。
+
+`Chassis_Control()` 每周期调用 `safety::g_safety.update()` 获取输出许可。
+调试器可直接展开 `g_safety` 查看 `state`、`active_faults`、`latched_faults`、
+`warnings` 和 `command_scale`。
+
+完整输入、故障位、状态转换和扩展约定见
+[安全与故障状态机文档](../../3_LuojiaFox/Safety/README.md)。
+
 
