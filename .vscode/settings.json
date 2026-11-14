@@ -10,6 +10,6 @@
   "emberprobe.sampleFrequencyHz": 30,
   "emberprobe.armToolchainPath": "C:\\msys64\\ucrt64\\bin",
   "emberprobe.armToolchainPrefix": "arm-none-eabi-",
-  "emberprobe.gdbPath": "C:\\msys64\\mingw64\\bin\\gdb-multiarch.exe",
+  "emberprobe.gdbPath": "C:\\msys64\\ucrt64\\bin\\gdb-multiarch.exe",
   "emberprobe.objdumpPath": "C:\\msys64\\ucrt64\\bin\\arm-none-eabi-objdump.exe"
 }

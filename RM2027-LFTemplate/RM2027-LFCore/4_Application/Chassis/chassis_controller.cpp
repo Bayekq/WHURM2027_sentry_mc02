@@ -21,7 +21,7 @@ namespace {
  * @brief 由有效轮速估计底盘旋转角速度。
  * @param[in] feedback 包含轮缘线速度和有效轮位图的反馈快照。
  * @return 底盘旋转角速度，单位 rad/s；无有效轮时返回 0。
- * @note 全向轮纯旋转时各轮轮缘线速度约为 -R*wz。
+ * @note 全向轮纯旋转时各轮轮缘切向速度约为 -D*wz。
  */
 float wheelAngularVelocity(
     const ChassisFeedback& feedback
@@ -39,8 +39,8 @@ float wheelAngularVelocity(
         return 0.0f;
     }
 
-    // 纯旋转时各轮轮缘线速度为 -R*wz。
-    return -sum / (static_cast<float>(count) * kWheelRadius);
+    // 纯旋转时各轮轮缘切向速度为 -D*wz，D 为轮心到车体中心的距离。
+    return -sum / (static_cast<float>(count) * kWheelCenterDistance);
 }
 
 } // namespace
@@ -51,6 +51,22 @@ float wheelAngularVelocity(
  */
 bool ChassisController::init()
 {
+    VelocityPlannerConfig planner_config {};
+    planner_config.linear_accel_mps2 = kPlannerLinearAccelMps2;
+    planner_config.linear_decel_mps2 = kPlannerLinearDecelMps2;
+    planner_config.linear_jerk_mps3 = kPlannerLinearJerkMps3;
+    planner_config.yaw_accel_rad_s2 = kPlannerYawAccelRadS2;
+    planner_config.yaw_decel_rad_s2 = kPlannerYawDecelRadS2;
+    planner_config.yaw_jerk_rad_s3 = kPlannerYawJerkRadS3;
+    planner_config.tracking_gain_per_s = kPlannerTrackingGainPerS;
+    planner_config.damping_gain_per_s = kPlannerDampingGainPerS;
+    planner_config.velocity_epsilon = kPlannerVelocityEpsilon;
+    planner_config.minimum_dt_s = kPlannerMinimumDtS;
+    planner_config.maximum_dt_s = kPlannerMaximumDtS;
+    if (!velocity_planner_.init(planner_config)) {
+        return false;
+    }
+
     ForceActuatorParam params[kWheelCount] = {};
     for (uint8_t i = 0U; i < kWheelCount; ++i) {
         if (!wheel_motor_[i].init(
@@ -75,8 +91,10 @@ bool ChassisController::init()
         params[i].gravity_offset = kForceGravityOffset;
     }
 
-    force_solver_.init(params, kWheelCount, kForceDof, kControlPeriodS);
-    force_solver_.setVelocityFilterAlpha(kForceVelocityFilterAlpha);
+    if (!force_solver_.init(params, kWheelCount, kForceDof, kControlPeriodS)
+        || !force_solver_.setVelocityFilterAlpha(kForceVelocityFilterAlpha)) {
+        return false;
+    }
 
     float distribution[kWheelCount * kForceDof] = {};
     force_ready_ = ForceSolver::buildOmniDistribution(
@@ -85,7 +103,7 @@ bool ChassisController::init()
         distribution
     );
     if (force_ready_) {
-        force_solver_.setDistribution(distribution);
+        force_ready_ = force_solver_.setDistribution(distribution);
     }
 
     motion_compensation::Config motion_config =
@@ -133,6 +151,7 @@ bool ChassisController::init()
     vx_filtered_ = 0.0f;
     vy_filtered_ = 0.0f;
     wz_filtered_ = 0.0f;
+    latest_plan = {};
     sendZero();
     return true;
 }
@@ -155,6 +174,24 @@ ChassisFeedback ChassisController::readFeedback(
         feedback.wheel_omega[i] = data.velocity_rad_s;
         feedback.wheel_linear[i] = kWheelRadius * data.velocity_rad_s;
         feedback.all_wheels_online = feedback.all_wheels_online && online;
+
+        if (data.temperature_valid) {
+            feedback.temperature_valid_mask |=
+                static_cast<uint8_t>(1U << i);
+            feedback.temperature_c[i] = data.temperature;
+            if (data.temperature >= kWheelTemperatureWarningC) {
+                feedback.temperature_warning_mask |=
+                    static_cast<uint8_t>(1U << i);
+            }
+            if (data.temperature >= kWheelTemperatureCriticalC) {
+                feedback.temperature_critical_mask |=
+                    static_cast<uint8_t>(1U << i);
+            }
+        }
+        if (data.error_code != 0U) {
+            feedback.driver_fault_mask |=
+                static_cast<uint8_t>(1U << i);
+        }
 
         // 在线仅代表 CAN 反馈未超时；有限值检查阻止 NaN/Inf 进入轮速逆解。
         // bit i 对应逻辑轮序 i，供运动补偿器筛掉不可用轮速。
@@ -191,7 +228,7 @@ ChassisFeedback ChassisController::readFeedback(
     measurement.yaw_rate_rad_s =
         imu_fresh ? imu.yaw_rate_dps * BASIC_MATH_DEG_TO_RAD : 0.0f;
     measurement.yaw_rate_valid = imu_fresh;
-    measurement.wheel_radius_m = kWheelRadius;
+    measurement.wheel_center_distance_m = kWheelCenterDistance;
     measurement.acceleration_x_mps2 =
         imu_fresh ? imu.acceleration_x_mps2 : 0.0f;
     measurement.acceleration_y_mps2 =
@@ -268,6 +305,8 @@ void ChassisController::resetControlState()
     vy_pid_.setIntegralError(0.0f);
     wz_pid_.setIntegralError(0.0f);
     force_solver_.setEnable(false);
+    velocity_planner_.reset();
+    latest_plan = {};
 }
 
 /**
@@ -304,9 +343,27 @@ bool ChassisController::calculate(
         target_vy = basic_math::constrain(corrected.vy_mps, -kMaxVy, kMaxVy);
     }
 
-    vx_pid_.setTarget(target_vx);
-    vy_pid_.setTarget(target_vy);
-    wz_pid_.setTarget(command.wz);
+    if (kEnableVelocityPlanner) {
+        latest_plan = velocity_planner_.update(
+            target_vx,
+            target_vy,
+            command.wz,
+            kControlPeriodS
+        );
+    } else {
+        latest_plan = {
+            target_vx,
+            target_vy,
+            command.wz,
+            0.0f,
+            0.0f,
+            0.0f
+        };
+    }
+
+    vx_pid_.setTarget(latest_plan.vx);
+    vy_pid_.setTarget(latest_plan.vy);
+    wz_pid_.setTarget(latest_plan.wz);
 
     vx_pid_.setNow(feedback.vx);
     vy_pid_.setNow(feedback.vy);
@@ -330,8 +387,14 @@ bool ChassisController::calculate(
         basic_math::constrain(wz_pid_.getOut(), -kMaxMz, kMaxMz)
     };
 
-    force_solver_.setTarget(generalized_force);
-    force_solver_.setNow(nullptr, feedback.wheel_omega);
+    if (!force_solver_.setTarget(generalized_force)
+        || !force_solver_.setNow(nullptr, feedback.wheel_omega)) {
+        resetControlState();
+        for (uint8_t i = 0U; i < kWheelCount; ++i) {
+            current[i] = 0.0f;
+        }
+        return false;
+    }
     force_solver_.setEnable(true);
     force_solver_.timCalculatePeriodElapsedCallback();
 
