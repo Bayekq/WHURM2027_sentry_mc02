@@ -5,8 +5,10 @@
 ```text
 系统状态
   -> 命令选择
+  -> 安全检查
   -> 电机/IMU 反馈
   -> 速度目标补偿
+  -> 速度/加速度/Jerk 规划
   -> vx/vy/wz 速度环
   -> 四轮力分配
   -> 功率衰减
@@ -30,6 +32,7 @@
 | `chassis_command.hpp/.cpp` | 模式选择、遥控/上位机命令、命令时效检查 |
 | `chassis_controller.hpp/.cpp` | 反馈读取、轮速/IMU 融合、速度闭环、力分配和 CAN 发送 |
 | `chassis_power_manager.hpp/.cpp` | 裁判系统/超级电容功率上限仲裁和电流衰减 |
+| `velocity_planner.hpp/.cpp` | 正常运动目标的加速度、Jerk 和二维合成限制 |
 
 `app_chassis.cpp` 不应重新增加算法细节。新的底层能力应放到对应算法模块，
 车型差异应放入 `chassis_config.hpp`。
@@ -49,6 +52,7 @@
   - `motionUsingAcceleration()`：本周期是否使用有效 IMU 加速度。
   - `motionAccelerationX/Y()`：融合后的底盘 x/y 向加速度。
   - `gravityReady()`：重力前馈器是否初始化成功。
+  - `latest_plan`：规划后的 `vx/vy/wz` 和 `ax/ay/alpha`。
   - `latest_feedback`：逐轮打滑、重力投影和前馈力快照。
   - 私有成员可在调试器中继续展开，查看电机、PID、滤波器和力分配内部状态。
 
@@ -61,6 +65,7 @@
 ## 当前控制边界
 
 - 轮速与 IMU 加速度使用恒加速度卡尔曼滤波融合。
+- 速度目标经过加速度和 Jerk 限制后再进入 PID。
 - 目标速度补偿以 `K * |yaw_rate|` 为增益。
 - `Slip_compensation1` 已基于轮速校正前的 IMU 预测速度提供逐轮打滑检测。
 - 打滑置信度已用于轮速加权速度估计；当前尚未进入四轮力矩重分配。
@@ -92,5 +97,8 @@ CAN Bus-off、裁判系统、超级电容和双板链路状态：
 
 完整输入、故障位、状态转换和扩展约定见
 [安全与故障状态机文档](../../3_LuojiaFox/Safety/README.md)。
+
+速度规划算法、参数和实车标定步骤见
+[底盘速度规划文档](velocity_planning.md)。
 
 

@@ -14,6 +14,7 @@
 #include "chassis_config.hpp"
 #include "dvc_dji_motor.hpp"
 #include "lf_core.hpp"
+#include "velocity_planner.hpp"
 
 #include <stdint.h>
 
@@ -144,6 +145,9 @@ public:
     /** @brief 最近一次反馈快照，可在调试器中查看打滑分数和置信度。 */
     ChassisFeedback latest_feedback;
 
+    /** @brief 最近一次速度规划输出，可在调试器中查看目标加速度和 Jerk 结果。 */
+    VelocityPlan latest_plan {};
+
 private:
     /** @brief 清空速度环积分并关闭力分配输出，不发送 CAN 命令。 */
     void resetControlState();
@@ -155,6 +159,7 @@ private:
     PID wz_pid_ {};
     motion_compensation::OmniMotionCompensator motion_compensator_ {};
     gravity_compensation::GravityCompensator gravity_compensator_ {};
+    VelocityPlanner velocity_planner_ {};
 
     float vx_filtered_ = 0.0f;
     float vy_filtered_ = 0.0f;

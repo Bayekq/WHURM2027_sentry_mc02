@@ -43,6 +43,9 @@ RM2027-LFTemplate/
 - **安全状态机**：汇总 `Detect`、轮电机故障码、温度、CAN Bus-off、裁判、超电和双板链路，
   统一产生底盘输出许可与降级比例。状态、恢复策略和调试方法见
   [安全与故障状态机](RM2027-LFTemplate/RM2027-LFCore/3_LuojiaFox/Safety/README.md)。
+- **速度规划**：在 PID 前限制底盘线速度、角速度、加速度和 Jerk，并输出规划加速度供调试和
+  后续前馈使用。参数、接入和实车标定方法见
+  [底盘速度规划](RM2027-LFTemplate/RM2027-LFCore/4_Application/Chassis/velocity_planning.md)。
 - **扩展业务**：设备协议放在 `2_Device`，控制流程放在 `4_Application`；
   HAL 回调和生成代码调用的入口保持 C 链接，复用已有驱动、数学和矩阵接口。
 

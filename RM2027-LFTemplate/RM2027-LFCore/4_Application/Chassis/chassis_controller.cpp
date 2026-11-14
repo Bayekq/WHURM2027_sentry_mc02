@@ -51,6 +51,22 @@ float wheelAngularVelocity(
  */
 bool ChassisController::init()
 {
+    VelocityPlannerConfig planner_config {};
+    planner_config.linear_accel_mps2 = kPlannerLinearAccelMps2;
+    planner_config.linear_decel_mps2 = kPlannerLinearDecelMps2;
+    planner_config.linear_jerk_mps3 = kPlannerLinearJerkMps3;
+    planner_config.yaw_accel_rad_s2 = kPlannerYawAccelRadS2;
+    planner_config.yaw_decel_rad_s2 = kPlannerYawDecelRadS2;
+    planner_config.yaw_jerk_rad_s3 = kPlannerYawJerkRadS3;
+    planner_config.tracking_gain_per_s = kPlannerTrackingGainPerS;
+    planner_config.damping_gain_per_s = kPlannerDampingGainPerS;
+    planner_config.velocity_epsilon = kPlannerVelocityEpsilon;
+    planner_config.minimum_dt_s = kPlannerMinimumDtS;
+    planner_config.maximum_dt_s = kPlannerMaximumDtS;
+    if (!velocity_planner_.init(planner_config)) {
+        return false;
+    }
+
     ForceActuatorParam params[kWheelCount] = {};
     for (uint8_t i = 0U; i < kWheelCount; ++i) {
         if (!wheel_motor_[i].init(
@@ -135,6 +151,7 @@ bool ChassisController::init()
     vx_filtered_ = 0.0f;
     vy_filtered_ = 0.0f;
     wz_filtered_ = 0.0f;
+    latest_plan = {};
     sendZero();
     return true;
 }
@@ -288,6 +305,8 @@ void ChassisController::resetControlState()
     vy_pid_.setIntegralError(0.0f);
     wz_pid_.setIntegralError(0.0f);
     force_solver_.setEnable(false);
+    velocity_planner_.reset();
+    latest_plan = {};
 }
 
 /**
@@ -324,9 +343,27 @@ bool ChassisController::calculate(
         target_vy = basic_math::constrain(corrected.vy_mps, -kMaxVy, kMaxVy);
     }
 
-    vx_pid_.setTarget(target_vx);
-    vy_pid_.setTarget(target_vy);
-    wz_pid_.setTarget(command.wz);
+    if (kEnableVelocityPlanner) {
+        latest_plan = velocity_planner_.update(
+            target_vx,
+            target_vy,
+            command.wz,
+            kControlPeriodS
+        );
+    } else {
+        latest_plan = {
+            target_vx,
+            target_vy,
+            command.wz,
+            0.0f,
+            0.0f,
+            0.0f
+        };
+    }
+
+    vx_pid_.setTarget(latest_plan.vx);
+    vy_pid_.setTarget(latest_plan.vy);
+    wz_pid_.setTarget(latest_plan.wz);
 
     vx_pid_.setNow(feedback.vx);
     vy_pid_.setNow(feedback.vy);
