@@ -25,6 +25,8 @@ constexpr float kWheelCenterDistance = 0.250f;
 constexpr float kWheelTorquePerAmp = 0.150f;
 constexpr float kWheelTorqueMax = 2.500f;
 constexpr float kC620MaxCurrent = 20.0f;
+constexpr uint8_t kWheelTemperatureWarningC = 75U;
+constexpr uint8_t kWheelTemperatureCriticalC = 90U;
 
 constexpr float kFallbackChassisPowerLimitW = 60.0f;
 constexpr float kPowerSafetyMargin = 0.90f;
@@ -47,6 +49,20 @@ constexpr float kControlPeriodS = 0.001f;
 constexpr bool kEnableMotionTargetCompensation = true;
 constexpr uint32_t kImuDataTimeoutMs = 10U;
 constexpr uint32_t kAutoCommandTimeoutMs = 100U;
+
+// 正常运动目标规划。安全故障急停不经过规划器，仍然直接零输出。
+constexpr bool kEnableVelocityPlanner = true;
+constexpr float kPlannerLinearAccelMps2 = 1.5f;
+constexpr float kPlannerLinearDecelMps2 = 2.0f;
+constexpr float kPlannerLinearJerkMps3 = 12.0f;
+constexpr float kPlannerYawAccelRadS2 = 6.0f;
+constexpr float kPlannerYawDecelRadS2 = 8.0f;
+constexpr float kPlannerYawJerkRadS3 = 60.0f;
+constexpr float kPlannerTrackingGainPerS = 10.0f;
+constexpr float kPlannerDampingGainPerS = 6.0f;
+constexpr float kPlannerVelocityEpsilon = 0.002f;
+constexpr float kPlannerMinimumDtS = 0.0005f;
+constexpr float kPlannerMaximumDtS = 0.0025f;
 
 // 基于 IMU 预测速度的逐轮打滑检测参数。
 constexpr bool kEnableSlipDetection = true;

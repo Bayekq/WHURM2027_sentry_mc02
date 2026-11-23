@@ -50,6 +50,7 @@ typedef struct {
 void detect_hook(uint8_t toe);             //告诉检测模块，某个设备刚刚收到了有效数据
 bool toe_is_error(uint8_t toe);            //查询某个设备当前是否存在错误
 const error_t *get_error_list_point(void); //返回整个错误状态数组的首地址
+uint32_t detectGetErrorMask(void);         //返回所有启用设备当前错误的位图
 
 #ifdef __cplusplus
 }

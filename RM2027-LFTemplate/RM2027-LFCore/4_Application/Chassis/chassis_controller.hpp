@@ -8,12 +8,13 @@
 
 #include "alg_force.hpp"
 #include "alg_gravity_compensation.hpp"
-#include "alg_motion_compensation.hpp"
+#include "alg_slip_compensation1.hpp"
 #include "alg_pid.h"
 #include "chassis_command.hpp"
 #include "chassis_config.hpp"
 #include "dvc_dji_motor.hpp"
 #include "lf_core.hpp"
+#include "velocity_planner.hpp"
 
 #include <stdint.h>
 
@@ -41,6 +42,12 @@ struct ChassisFeedback {
     uint8_t slip_wheel_mask = 0U;
     bool slip_detection_valid = false;
     bool slip_detected = false;
+    /** @brief 轮电机温度、驱动故障与温度分级位图。 */
+    uint8_t temperature_c[kWheelCount] {};
+    uint8_t temperature_valid_mask = 0U;
+    uint8_t temperature_warning_mask = 0U;
+    uint8_t temperature_critical_mask = 0U;
+    uint8_t driver_fault_mask = 0U;
     /** @brief 姿态投影到车体平面的重力加速度，m/s²。 */
     float gravity_accel_x = 0.0f;
     float gravity_accel_y = 0.0f;
@@ -138,6 +145,9 @@ public:
     /** @brief 最近一次反馈快照，可在调试器中查看打滑分数和置信度。 */
     ChassisFeedback latest_feedback;
 
+    /** @brief 最近一次速度规划输出，可在调试器中查看目标加速度和 Jerk 结果。 */
+    VelocityPlan latest_plan {};
+
 private:
     /** @brief 清空速度环积分并关闭力分配输出，不发送 CAN 命令。 */
     void resetControlState();
@@ -149,6 +159,7 @@ private:
     PID wz_pid_ {};
     motion_compensation::OmniMotionCompensator motion_compensator_ {};
     gravity_compensation::GravityCompensator gravity_compensator_ {};
+    VelocityPlanner velocity_planner_ {};
 
     float vx_filtered_ = 0.0f;
     float vy_filtered_ = 0.0f;
